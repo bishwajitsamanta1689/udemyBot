@@ -1,10 +1,10 @@
 package main
 
 import (
-	"io"
+	"fmt"
+	"github.com/PuerkitoBio/goquery"
 	"log"
 	"net/http"
-	"os"
 )
 
 // Select Content for searching WebPage
@@ -15,13 +15,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	file, err := os.Create("udemy.html")
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
-	n, err := io.Copy(file, res.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("Number of Bytes Copied:", n)
+	doc.Find("p[class]").Each(func(i int, selection *goquery.Selection) {
+		fmt.Println(goquery.OuterHtml(selection))
+	})
 }
